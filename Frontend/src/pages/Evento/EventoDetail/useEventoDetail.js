@@ -20,6 +20,9 @@ export const useEventoDetail = () => {
     const [comprobanteFile, setComprobanteFile] = useState(null);
     const [comprobantePreview, setComprobantePreview] = useState(null);
 
+    // Estado para modal de QR de pago
+    const [showQRPagoModal, setShowQRPagoModal] = useState(false);
+
     const userInfo = getUserInfo();
     const isLoggedIn = !!getAccessToken();
 
@@ -48,13 +51,23 @@ export const useEventoDetail = () => {
             return;
         }
 
-        // Si el evento tiene precio, mostrar modal para comprobante
+        // Si el evento tiene precio, mostrar primero el QR de pago
         if (evento && evento.precio > 0) {
-            setShowComprobanteModal(true);
+            setShowQRPagoModal(true);
         } else {
             // Evento gratuito - inscribir directamente
             procesarInscripcion();
         }
+    };
+
+    // Continuar al modal de comprobante después de ver el QR
+    const handleContinuarPago = () => {
+        setShowQRPagoModal(false);
+        setShowComprobanteModal(true);
+    };
+
+    const handleCloseQRPagoModal = () => {
+        setShowQRPagoModal(false);
     };
 
     // Procesar la inscripción (sin comprobante - evento gratuito)
@@ -163,6 +176,10 @@ export const useEventoDetail = () => {
         modalType,
         userInfo,
         isLoggedIn,
+        // QR de Pago
+        showQRPagoModal,
+        handleContinuarPago,
+        handleCloseQRPagoModal,
         // Comprobante
         showComprobanteModal,
         comprobantePreview,

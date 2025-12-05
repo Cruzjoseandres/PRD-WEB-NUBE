@@ -1,5 +1,6 @@
 import { Container, Row, Col, Card, Button, Spinner, Alert, Modal, Form } from 'react-bootstrap';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { QRCodeSVG } from 'qrcode.react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEventoDetail } from './useEventoDetail';
@@ -18,6 +19,8 @@ const EventoDetail = () => {
     evento, loading, error, inscribiendo, showModal, modalMessage, modalType,
     userInfo, isLoggedIn, handleInscribirse, handleCloseModal, handleVolver,
     handleLogin, handleRegister, formatFecha, getPosition,
+    // QR de Pago
+    showQRPagoModal, handleContinuarPago, handleCloseQRPagoModal,
     // Comprobante
     showComprobanteModal, comprobantePreview, handleComprobanteChange,
     handleConfirmarInscripcion, handleCloseComprobanteModal
@@ -106,6 +109,45 @@ const EventoDetail = () => {
         <Modal.Header closeButton><Modal.Title>{modalType === 'success' ? 'Éxito' : 'Error'}</Modal.Title></Modal.Header>
         <Modal.Body><Alert variant={modalType}>{modalMessage}</Alert></Modal.Body>
         <Modal.Footer><Button variant="secondary" onClick={handleCloseModal}>Cerrar</Button></Modal.Footer>
+      </Modal>
+
+      {/* Modal de QR de Pago */}
+      <Modal show={showQRPagoModal} onHide={handleCloseQRPagoModal} centered size="md">
+        <Modal.Header closeButton>
+          <Modal.Title>📱 Realizar Pago</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <Alert variant="info" className="mb-4">
+            <strong>Precio del evento:</strong> ${evento?.precio}
+            <p className="mb-0 mt-2 small">Escanea el código QR para realizar el pago</p>
+          </Alert>
+
+          <div className="qr-pago-container mb-4 p-4" style={{
+            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+            borderRadius: '16px',
+            display: 'inline-block'
+          }}>
+            <QRCodeSVG
+              value={`pago-evento-${evento?.id || 'demo'}-${Date.now()}`}
+              size={200}
+              level="H"
+              includeMargin={true}
+              style={{ borderRadius: '8px' }}
+            />
+          </div>
+
+          <p className="text-muted small mb-0">
+            Una vez realizado el pago, haz clic en el botón de abajo para continuar
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button variant="secondary" onClick={handleCloseQRPagoModal}>
+            Cancelar
+          </Button>
+          <Button variant="success" size="lg" onClick={handleContinuarPago}>
+            ✓ Ya realicé el pago
+          </Button>
+        </Modal.Footer>
       </Modal>
 
       {/* Modal de comprobante de pago */}
