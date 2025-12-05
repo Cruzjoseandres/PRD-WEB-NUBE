@@ -5,18 +5,23 @@ import { join } from 'path';
 import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
-  });
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
-  app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+    const app = await NestFactory.create(AppModule);
 
-  await app.listen(process.env.PORT ?? 3000);
+    // --- CAMBIO IMPORTANTE: Permitir todo (CORS abierto) ---
+    app.enableCors();
+    // Al dejarlo vacío, permites que tu Frontend de Render se conecte sin problemas.
+    // -------------------------------------------------------
+
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            forbidNonWhitelisted: true,
+        }),
+    );
+
+    // Esto se queda por si acaso, aunque ya usamos Cloudinary
+    app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+
+    await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
