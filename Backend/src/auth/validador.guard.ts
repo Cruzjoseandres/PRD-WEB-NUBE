@@ -12,7 +12,7 @@ export class ValidadorGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<RequestWithUser>();
     const user = request.user;
 
-    if (user.role === 'validador') {
+    if (user.role === 'validator') {
       return true;
     }
     throw new ForbiddenException('Solo los validadores pueden realizar esta acción.');
