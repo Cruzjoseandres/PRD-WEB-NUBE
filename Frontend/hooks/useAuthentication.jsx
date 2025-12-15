@@ -52,7 +52,7 @@ const useAuthentication = () => {
           case 'organizador':
             navigate("/organizador/eventos");
             break;
-          case 'validador':
+          case 'validator':
             navigate("/validador");
             break;
           case 'user':
